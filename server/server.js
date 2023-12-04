@@ -1,14 +1,14 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+require('dotenv').config()
 
-
-const SERVER_PORT = 5000
-const DB_URL = 'mongodb+srv://admin:admin@publicappcluster.csacns5.mongodb.net/?retryWrites=true&w=majority'
+// const SERVER_PORT = 5000
+// const DB_URL = 'mongodb+srv://admin:admin@publicappcluster.csacns5.mongodb.net/?retryWrites=true&w=majority'
 
 
 mongoose
-    .connect(DB_URL)
+    .connect(process.env.DB_URL)
     .then(()=> console.log('MongoDB database connetcted'))
     .catch(()=> console.log('MongoDB database connection failed'))
 
@@ -40,11 +40,11 @@ const start = async () =>{
         })
 
 
-        app.listen(SERVER_PORT, (err)=>{
+        app.listen(process.env.SERVER_PORT, (err)=>{
             if(err){
                 return console.log('server error' + err)
             }
-            console.log(`Server started on PORT: ${SERVER_PORT}`)
+            console.log(`Server started on PORT: ${process.env.SERVER_PORT}`)
         })
     } catch (err) {
         console.log(err)
