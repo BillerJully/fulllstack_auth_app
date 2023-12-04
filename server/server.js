@@ -1,9 +1,16 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
 
 
 const SERVER_PORT = 5000
+const DB_URL = 'mongodb+srv://admin:admin@publicappcluster.csacns5.mongodb.net/?retryWrites=true&w=majority'
 
+
+mongoose
+    .connect(DB_URL)
+    .then(()=> console.log('MongoDB database connetcted'))
+    .catch(()=> console.log('MongoDB database connection failed'))
 
 const app = express()
 app.use(express.json())
@@ -17,7 +24,7 @@ const start = async () =>{
         })
 
 
-        
+
         app.post('/user/login', (req, res)=>{
             console.log("ERROR")
             console.log(req.body)
