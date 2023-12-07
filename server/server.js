@@ -1,7 +1,15 @@
-const express = require('express')
-const jwt = require('jsonwebtoken')
-const mongoose = require('mongoose')
-require('dotenv').config()
+// const express = require('express')
+// const jwt = require('jsonwebtoken')
+// const mongoose = require('mongoose')
+// require('dotenv').config()
+import express  from 'express'
+import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
+import "dotenv/config.js"
+import {accountCreateValidator} from './validation/auth.js'
+import { validationResult } from 'express-validator'
+import AccountModel from './models/Account.js'
+import bcrypt from 'bcrypt'
 
 // const SERVER_PORT = 5000
 // const DB_URL = 'mongodb+srv://admin:admin@publicappcluster.csacns5.mongodb.net/?retryWrites=true&w=majority'
@@ -10,7 +18,10 @@ require('dotenv').config()
 mongoose
     .connect(process.env.DB_URL)
     .then(()=> console.log('MongoDB database connetcted'))
-    .catch(()=> console.log('MongoDB database connection failed'))
+    .catch((err)=> {
+        console.log('MongoDB database connection failed')
+        console.log('\n'  + err)
+})
 
 const app = express()
 app.use(express.json())
@@ -23,20 +34,17 @@ const start = async () =>{
 
         })
 
+        app.post('/user/create', accountCreateValidator, async (req, res)=>{
 
+            const accountErrors = validationResult(req)
+            if(!accountErrors.isEmpty()){
+                return res.status(400).json(accountErrors.array())
+            }
 
-        app.post('/user/login', (req, res)=>{
-            console.log("ERROR")
-            console.log(req.body)
-            const usertoken = jwt.sign({
-                password: req.body.password,
-            }, '3')
-            console.log("ERROR")
             res.json({
-                status: true,
-                usertoken,
-
+                account_created: true
             })
+            
         })
 
 
