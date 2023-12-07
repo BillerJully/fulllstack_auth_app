@@ -40,10 +40,14 @@ const start = async () =>{
             if(!accountErrors.isEmpty()){
                 return res.status(400).json(accountErrors.array())
             }
-
-            res.json({
-                account_created: true
+            const doc = new AccountModel({
+                user_email: req.body.email,
+                user_passwordHash: req.body.password
             })
+
+
+            const account = await doc.save()
+            res.json(account)
             
         })
 
