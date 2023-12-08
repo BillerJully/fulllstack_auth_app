@@ -10,6 +10,9 @@ import {accountCreateValidator} from './validation/auth.js'
 import { validationResult } from 'express-validator'
 import AccountModel from './models/Account.js'
 import bcrypt from 'bcrypt'
+import checkAuth from './utils/checkAuth.js'
+
+import * as AccountController from './controllers/AccountController.js'
 
 // const SERVER_PORT = 5000
 // const DB_URL = 'mongodb+srv://admin:admin@publicappcluster.csacns5.mongodb.net/?retryWrites=true&w=majority'
@@ -33,77 +36,9 @@ const start = async () =>{
             res.send("Server on work")
 
         })
-        app.get('/user/mypage', (req, res)=>{
-            try {
-            
-                
-            } catch (error) {
-                console.log(error)
-                res.status(500).json({message: "Login error!"})
-            }
-        })
-
-        app.post('/user/login', async (req,res)=>{
-            try {
-                const account = await AccountModel.findOne({user_email: req.body.email})
-
-                if(!account) {
-                    return res.status(404).json({message: "User not found!"})
-                }
-
-                // const isPassword = await bcrypt.compare(req.body.password, account._doc.password)
-
-                // if(!isPassword) {
-                //     return res.status(404).json({message: "Password is not correct!"})
-                // }
-                const password = await AccountModel.findOne({user_password: req.body.password})
-
-                if(!password) {
-                    return res.status(404).json({message: "Wrong password!"})
-                }
-                
-                const token = jwt.sign({
-                    _id: account._id,
-                }, 'secretkey', {expiresIn: '30d'})
-                res.json({...account._doc, token})
-
-            } catch (error) {
-                console.log(error)
-                res.status(500).json({message: "Login error!"})
-            }
-        })
-
-        app.post('/user/create', accountCreateValidator, async (req, res)=>{
-            try {
-                const accountErrors = validationResult(req)
-                if(!accountErrors.isEmpty()){
-                    return res.status(400).json(accountErrors.array())
-                }
-
-
-                const doc = new AccountModel({
-                    user_email: req.body.email,
-                    user_password: req.body.password,
-                    user_login: req.body.login
-                })
-    
-    
-                const account = await doc.save()
-
-                const token = jwt.sign({
-                    _id: account._id,
-                }, 'secretkey', {expiresIn: '30d'})
-
-
-                res.json({...account._doc, token})
-            } catch (error) {
-                console.log(error)
-                res.status(500).json({message: "Creation failed!"})
-            }
-
-         
-            
-        })
+        app.get('/user/mypage', checkAuth, AccountController.accountPage)
+        app.post('/user/login', AccountController.accountLoginer)
+        app.post('/user/create', accountCreateValidator, AccountController.accountCreator)
 
 
         app.listen(process.env.SERVER_PORT, (err)=>{
