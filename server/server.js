@@ -33,6 +33,15 @@ const start = async () =>{
             res.send("Server on work")
 
         })
+        app.get('/user/mypage', (req, res)=>{
+            try {
+            
+                
+            } catch (error) {
+                console.log(error)
+                res.status(500).json({message: "Login error!"})
+            }
+        })
 
         app.post('/user/login', async (req,res)=>{
             try {
