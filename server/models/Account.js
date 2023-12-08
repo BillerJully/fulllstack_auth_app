@@ -9,7 +9,11 @@ const AccountSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        user_passwordHash: {
+        user_login: {
+            type: String,
+            require: true
+        },
+        user_password: {
             type: String,
             required: true
 
