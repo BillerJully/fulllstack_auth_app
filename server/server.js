@@ -34,20 +34,65 @@ const start = async () =>{
 
         })
 
-        app.post('/user/create', accountCreateValidator, async (req, res)=>{
+        app.post('/user/login', async (req,res)=>{
+            try {
+                const account = await AccountModel.findOne({user_email: req.body.email})
 
-            const accountErrors = validationResult(req)
-            if(!accountErrors.isEmpty()){
-                return res.status(400).json(accountErrors.array())
+                if(!account) {
+                    return res.status(404).json({message: "User not found!"})
+                }
+
+                // const isPassword = await bcrypt.compare(req.body.password, account._doc.password)
+
+                // if(!isPassword) {
+                //     return res.status(404).json({message: "Password is not correct!"})
+                // }
+                const password = await AccountModel.findOne({user_password: req.body.password})
+
+                if(!password) {
+                    return res.status(404).json({message: "Wrong password!"})
+                }
+                
+                const token = jwt.sign({
+                    _id: account._id,
+                }, 'secretkey', {expiresIn: '30d'})
+                res.json({...account._doc, token})
+
+            } catch (error) {
+                console.log(error)
+                res.status(500).json({message: "Login error!"})
             }
-            const doc = new AccountModel({
-                user_email: req.body.email,
-                user_passwordHash: req.body.password
-            })
+        })
+
+        app.post('/user/create', accountCreateValidator, async (req, res)=>{
+            try {
+                const accountErrors = validationResult(req)
+                if(!accountErrors.isEmpty()){
+                    return res.status(400).json(accountErrors.array())
+                }
 
 
-            const account = await doc.save()
-            res.json(account)
+                const doc = new AccountModel({
+                    user_email: req.body.email,
+                    user_password: req.body.password,
+                    user_login: req.body.login
+                })
+    
+    
+                const account = await doc.save()
+
+                const token = jwt.sign({
+                    _id: account._id,
+                }, 'secretkey', {expiresIn: '30d'})
+
+
+                res.json({...account._doc, token})
+            } catch (error) {
+                console.log(error)
+                res.status(500).json({message: "Creation failed!"})
+            }
+
+         
             
         })
 
