@@ -16,15 +16,15 @@ const LoginAuth = () => {
         <div className="inputs">
             {action==="Login"?<div></div>:   <div className="input">
                 <img src={profile_icon} alt="" />
-                <input type="text" placeholder='User login' />
+                <input type="text" placeholder='login' />
             </div>}
             <div className="input">
                 <img src={email_icon} alt="" />
-                <input type="email" placeholder='User mail'/>
+                <input type="email" placeholder='mail'/>
             </div>
             <div className="input">
                 <img src={password_icon} alt="" />
-                <input type="password" placeholder='User password'/>
+                <input type="password" placeholder='password'/>
             </div>
         </div>
         {action==="Sign Up"?<div></div>:<div className="forgot-password">
