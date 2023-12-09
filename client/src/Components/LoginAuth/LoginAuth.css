@@ -84,6 +84,8 @@
     display: flex;
     gap: 30px;
     margin: 60px auto;
+    justify-content: center;
+    width: 60%;
 }
 
 .submit{
@@ -107,4 +109,5 @@
     color: #676767;
 
 }
+
 
